@@ -1,0 +1,69 @@
+/* Container */
+.sourceworld {
+  max-width: 900px;
+  margin: 80px auto;
+  padding: 20px;
+  background: #1e1e1e;
+  color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Search Bar */
+.search-bar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  background: #333;
+  color: white;
+}
+
+/* Repository List */
+.repo-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Repository Card */
+.repo-card {
+  background: #252525;
+  padding: 15px;
+  border-radius: 5px;
+  transition: 0.3s;
+}
+
+.repo-card h3 {
+  margin: 0;
+  font-size: 18px;
+  color: #ffcc00;
+}
+
+.repo-card p {
+  font-size: 14px;
+  margin: 5px 0;
+  color: #bbb;
+}
+
+.repo-stats {
+  display: flex;
+  gap: 15px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+/* No Results */
+.no-results {
+  text-align: center;
+  font-size: 16px;
+  color: #ff4c4c;
+}
