@@ -1,3 +1,137 @@
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import logger from './logger.service.js';
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
+
+interface PRFile {
+  filename: string;
+  patch?: string;
+}
+
+class AIReviewService {
+  async reviewPullRequest(
+    owner: string,
+    repo: string,
+    prNumber: number,
+    prUrl: string,
+    githubToken: string
+  ): Promise<void> {
+    try {
+      if (!genAI || !GEMINI_API_KEY) {
+        logger.warn('Gemini API key not configured, skipping AI review');
+        return;
+      }
+
+      console.log(`🤖 Starting AI review for PR #${prNumber} in ${owner}/${repo}`);
+
+      // Fetch PR files
+      const files = await this.getPRFiles(owner, repo, prNumber, githubToken);
+      console.log(`📄 Found ${files.length} files in PR`);
+
+      if (files.length === 0) {
+        logger.info('No files found in PR, skipping review');
+        return;
+      }
+
+      // Combine all diffs
+      let combinedDiff = '';
+      for (const file of files) {
+        combinedDiff += `\n\n--- File: ${file.filename} ---\n${file.patch || 'No diff'}`;
+      }
+
+      // Get AI review from Gemini
+      console.log('🧠 Sending to Gemini for review...');
+      const model = genAI.getGenerativeModel({
+        model: 'gemini-2.5-flash',
+        generationConfig: {
+          maxOutputTokens: 1500,
+          temperature: 0.2,
+        },
+      });
+
+      const prompt = `You are an expert code reviewer. Review the following code changes from a GitHub Pull Request and provide constructive feedback in Markdown format.
+
+Please review this PR diff:
+${combinedDiff}
+
+Provide specific feedback on:
+- Code quality and best practices
+- Potential bugs or security issues
+- Performance improvements
+- Suggestions for better code structure
+
+Keep the review concise but helpful. Format your response in Markdown.`;
+
+      const result = await model.generateContent(prompt);
+      const aiComment = result.response.text();
+
+      console.log('✅ AI review generated');
+
+      // Post comment on GitHub
+      await this.postComment(owner, repo, prNumber, aiComment, githubToken);
+
+      console.log(`🎉 AI review posted successfully on PR #${prNumber}`);
+      logger.info(`AI review completed for PR #${prNumber} in ${owner}/${repo}`);
+    } catch (error) {
+      logger.error('Error in AI review:', error);
+      console.error('❌ AI review failed:', error);
+    }
+  }
+
+  private async getPRFiles(
+    owner: string,
+    repo: string,
+    prNumber: number,
+    githubToken: string
+  ): Promise<PRFile[]> {
+    const url = `https://api.github.com/repos/${owner}/${repo}/pulls/${prNumber}/files`;
+    const response = await fetch(url, {
+      headers: {
+        Authorization: `token ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch PR files: ${response.status} - ${errorText}`);
+    }
+
+    return await response.json();
+  }
+
+  private async postComment(
+    owner: string,
+    repo: string,
+    prNumber: number,
+    comment: string,
+    githubToken: string
+  ): Promise<void> {
+    const url = `https://api.github.com/repos/${owner}/${repo}/issues/${prNumber}/comments`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Authorization: `token ${githubToken}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        body: `## 🤖 AI Code Review\n\n${comment}`,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to post comment: ${response.status} - ${errorText}`);
+    }
+
+    console.log('💬 AI comment posted successfully!');
+  }
+}
+
+export default new AIReviewService();
 {
   "name": "cameo-grat",
   "version": "0.1.0",
