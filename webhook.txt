@@ -1,0 +1,32 @@
+ WEBHOOK RECEIVED!
+📨 Event type: pull_request
+✅ Found 2 connected repository instances! Finding all project members...
+📧 Creating notifications for 2 users
+🎉 Created 2 PR notifications
+🤖 Triggering AI review for PR #6...
+🤖 Starting AI review for PR #6 in Rahin2001/Cameo-Grat
+📄 Found 1 files in PR
+🧠 Sending to Gemini for review...
+❌ AI review failed: GoogleGenerativeAIFetchError: [GoogleGenerativeAI Error]: Error fetching from https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent: [429 Too Many Requests] You exceeded your current quota, please check your plan and billing details. For more information on this error, head to: https://ai.google.dev/gemini-api/docs/rate-limits. To monitor your current usage, head to: https://ai.dev/usage?tab=rate-limit.
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_requests, limit: 0 
+* Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_free_tier_input_token_count, limit: 0
+Please retry in 25.44173472s. [{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Learn more about Gemini API quotas","url":"https://ai.google.dev/gemini-api/docs/rate-limits"}]},{"@type":"type.googleapis.com/google.rpc.QuotaFailure","violations":[{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_requests","quotaId":"GenerateRequestsPerMinutePerProjectPerModel-FreeTier","quotaDimensions":{"location":"global","model":"gemini-2.0-flash-exp"}},{"quotaMetric":"generativelanguage.googleapis.com/generate_content_free_tier_input_token_count","quotaId":"GenerateContentInputTokensPerModelPerMinute-FreeTier","quotaDimensions":{"model":"gemini-2.0-flash-exp","location":"global"}}]},{"@type":"type.googleapis.com/google.rpc.RetryInfo","retryDelay":"25s"}]
+    at handleResponseNotOk (file:///C:/Users/rahin/OneDrive/Documents/devxintel_enterprise_app/node_modules/@google/generative-ai/dist/index.mjs:432:11)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async makeRequest (file:///C:/Users/rahin/OneDrive/Documents/devxintel_enterprise_app/node_modules/@google/generative-ai/dist/index.mjs:401:9)
+    at async generateContent (file:///C:/Users/rahin/OneDrive/Documents/devxintel_enterprise_app/node_modules/@google/generative-ai/dist/index.mjs:865:22)
+    at async AIReviewService.reviewPullRequest (C:\Users\rahin\OneDrive\Documents\devxintel_enterprise_app\account-service\src\services\aiReview.service.ts:66:22) {
+  status: 429,
+  statusText: 'Too Many Requests',
+  errorDetails: [
+    { '@type': 'type.googleapis.com/google.rpc.Help', links: [Array] },
+    {
+      '@type': 'type.googleapis.com/google.rpc.QuotaFailure',
+      violations: [Array]
+    },
+    {
+      '@type': 'type.googleapis.com/google.rpc.RetryInfo',
+      retryDelay: '25s'
+    }
+  ]
+}
