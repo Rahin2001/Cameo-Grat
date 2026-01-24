@@ -22,7 +22,13 @@ const SamplePage = () => {
         <h2>User Input</h2>
         <input
           type="text"
+        <input
+          type="text"
           placeholder="Enter your name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          aria-label="Enter your name"
+        />
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
